@@ -3,7 +3,7 @@
     "manifest_version": 2,
     "name": "iCampus downloader",
     "description": "Download iCampus videos",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "permissions": [
         "tabs",
         "downloads",
@@ -17,7 +17,7 @@
                 "https://*.skku.edu/*"
             ],
             "js": ["script.js"],
-            "all_frames": false
+            "all_frames": true
         }
     ],
 

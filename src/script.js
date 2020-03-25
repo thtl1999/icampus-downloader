@@ -1,47 +1,37 @@
-
-
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         // console.log(request, sender);
-        if (request.function == "open"){
-            try{
-                var title = document.getElementById('context_title').value
-                var id = getID(window.location.href)
-                var iframeURL = document.getElementById('tool_content')
-                iframeURL = iframeURL.contentWindow.document.getElementsByClassName('xnvc-video-frame')[0]
-                iframeURL = iframeURL.contentWindow.document.getElementsByClassName('xn-content-frame')[0]
-                iframeURL = iframeURL.src
-                
-            } catch(error){
-                alert('동영상 페이지로 이동해 주세요')
-                return
-            }
 
-            sendResponse({
-                url: iframeURL,
-                title: title,
-                id: id
+        try{
+            var course_id = getID(document.getElementById('track_form').action)
+            var video_url = document.getElementsByClassName('vc-vplay-video1')[0].src
+            var lecture_name = document.head.querySelector("[name~=title][content]").content
+
+            chrome.runtime.sendMessage({
+                status: 'video_frame',
+                video_url: video_url,
+                course_id: course_id,
+                lecture_name: lecture_name
             })
             
+        } catch(error){
+            //not a video frame
         }
-        else if (request.function == "download"){
-            try{
-                var id = getID(document.getElementById('track_form').action)
-                var video_url = document.getElementsByClassName('vc-vplay-video1')[0].src
-                var name = document.head.querySelector("[name~=title][content]").content
-                
-            }catch(error){
-                alert("동영상을 재생해 주세요")
-                return
-            }
 
-            sendResponse({
-                url: video_url,
-                id: id,
-                name: name
+        try{
+            var course_id = getID(window.location.href)
+            var course_name = document.getElementById('context_title').value
+
+            chrome.runtime.sendMessage({
+                status: 'main_frame',
+                course_id: course_id,
+                course_name: course_name
             })
+        } catch(error){
+            //not a main frame
         }
 })
+
 
 function getID(str){
     //https://gist.github.com/GuillaumeJasmin/9119436
