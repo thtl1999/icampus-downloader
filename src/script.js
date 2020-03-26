@@ -30,6 +30,18 @@ chrome.runtime.onMessage.addListener(
         } catch(error){
             //not a main frame
         }
+
+        try{
+            var lecture_topic = document.getElementsByClassName('xnct-title')[0].innerText
+        
+            chrome.runtime.sendMessage({
+                status: 'title_frame',
+                lecture_topic: lecture_topic
+            })
+        
+        } catch(error){
+            //not a title frame
+        }
 })
 
 

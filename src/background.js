@@ -10,6 +10,7 @@ chrome.browserAction.onClicked.addListener(function(tab) {
             course_id: null,
             course_name: null,
             lecture_name: null,
+            lecture_topic: null,
             video_url: null
         }
 
@@ -32,8 +33,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
             //download video
             chrome.downloads.download({
+                saveAs: false,
                 url: responses.video_url,
-                filename: responses.course_name + ' ' + responses.lecture_name + '.mp4'
+                filename: responses.course_name + ' ' + responses.lecture_name + ' ' + responses.lecture_topic + '.mp4'
             })
 
         }, 500)
@@ -46,14 +48,29 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 chrome.runtime.onMessage.addListener(
     function(req, sender) {
+        console.log(req)
+
         if (req.status === 'main_frame'){
             responses.main_frame = true
             responses.course_id = req.course_id
-            responses.course_name = req.course_name
+            responses.course_name = validate_filename(req.course_name)
         }
         else if (req.status === 'video_frame'){
             responses.video_frame = true
             responses.video_url = req.video_url
-            responses.lecture_name = req.lecture_name
-    }
+            responses.lecture_name = validate_filename(req.lecture_name)
+        }
+        else if (req.status === 'title_frame'){
+            responses.lecture_topic = validate_filename(req.lecture_topic)
+        }
 })
+
+
+function validate_filename(name){
+    //replace | * ? \ : < > $
+    var new_name = name.replace(/\||\*|\?|\\|\:|\<|\>|\$/gi, function (x) {
+        return ''
+    })
+
+    return new_name
+}
