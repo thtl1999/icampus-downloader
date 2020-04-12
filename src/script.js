@@ -2,19 +2,26 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         // console.log(request, sender);
 
-        try{
+        try{    //video frame
             var course_id = getID(document.getElementById('track_form').action)
-            var video_url = document.getElementsByClassName('vc-vplay-video1')[0].src
+            var videos = document.getElementsByTagName('video')
             var lecture_name = document.head.querySelector("[name~=title][content]").content
 
-            chrome.runtime.sendMessage({
-                status: 'video_frame',
-                video_url: video_url,
-                course_id: course_id,
-                lecture_name: lecture_name
-            })
+            for (video of videos){
+                if (video.src == '')
+                    continue
+
+                chrome.runtime.sendMessage({
+                    status: 'video_frame',
+                    video_url: video.src,
+                    course_id: course_id,
+                    lecture_name: lecture_name
+                })
+            }
+            
             
         } catch(error){
+            console.log(error)
             //not a video frame
         }
 

@@ -9,9 +9,8 @@ chrome.browserAction.onClicked.addListener(function(tab) {
             video_frame: false,
             course_id: null,
             course_name: null,
-            lecture_name: null,
-            lecture_topic: null,
-            video_url: null
+            lecture_info: [],
+            lecture_topic: null
         }
 
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -31,12 +30,31 @@ chrome.browserAction.onClicked.addListener(function(tab) {
                 return
             }
 
-            //download video
-            chrome.downloads.download({
-                saveAs: false,
-                url: responses.video_url,
-                filename: responses.course_name + ' ' + responses.lecture_name + ' ' + responses.lecture_topic + '.mp4'
-            })
+            
+            if (responses.lecture_info.length == 1){
+                //download video
+                var video = responses.lecture_info[0]
+                chrome.downloads.download({
+                    saveAs: false,
+                    url: video.video_url,
+                    filename: responses.course_name + ' ' + video.lecture_name + ' ' + responses.lecture_topic + '.mp4'
+                })
+            }
+            else{
+                //download videos
+                var index = 1
+                for (video of responses.lecture_info){
+                    chrome.downloads.download({
+                        saveAs: false,
+                        url: video.video_url,
+                        filename: responses.course_name + ' ' + video.lecture_name + ' ' + responses.lecture_topic + ' - ' + String(index) + '.mp4'
+                    })
+                    index++
+                }
+            }
+
+            
+            
 
         }, 500)
     }
@@ -56,9 +74,11 @@ chrome.runtime.onMessage.addListener(
             responses.course_name = validate_filename(req.course_name)
         }
         else if (req.status === 'video_frame'){
+            var lecture = {}
             responses.video_frame = true
-            responses.video_url = req.video_url
-            responses.lecture_name = validate_filename(req.lecture_name)
+            lecture.video_url = req.video_url
+            lecture.lecture_name = validate_filename(req.lecture_name)
+            responses.lecture_info.push(lecture)
         }
         else if (req.status === 'title_frame'){
             responses.lecture_topic = validate_filename(req.lecture_topic)

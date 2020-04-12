@@ -3,7 +3,7 @@
     "manifest_version": 2,
     "name": "iCampus downloader",
     "description": "Download iCampus videos",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "permissions": [
         "tabs",
         "downloads",
