@@ -3,7 +3,7 @@ chrome.runtime.onMessage.addListener(
         // console.log(request, sender);
 
         try{    //video frame
-            var course_id = getID(document.getElementById('track_form').action)
+            // var course_id = getID(document.getElementById('track_form').action)
             var videos = document.getElementsByTagName('video')
             var lecture_name = document.head.querySelector("[name~=title][content]").content
 
@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener(
                 chrome.runtime.sendMessage({
                     status: 'video_frame',
                     video_url: video.src,
-                    course_id: course_id,
+                    // course_id: course_id,
                     lecture_name: lecture_name
                 })
             }
